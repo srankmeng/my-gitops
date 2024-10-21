@@ -155,3 +155,66 @@ To implement GitOps using ArgoCD on your k3d cluster, follow these steps:
     - ArgoCD will detect the changes and automatically apply them to your k3d cluster
 
 This setup ensures that your k3d cluster configuration is always in sync with your Git repository, following GitOps best practices.
+
+## Running any application with Helm Chart
+
+Deploy Grafana using ArgoCD with Helm Chart:
+
+1. Create a new file named `argocd/grafana-application.yaml` with the following content:
+
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: grafana
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: 'https://grafana.github.io/helm-charts'
+        chart: grafana
+        targetRevision: 6.50.7  # Use the latest stable version
+        helm:
+          values: |
+            ingress:
+              enabled: true
+              hosts:
+                - grafana.example.com
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: monitoring
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+    ```
+
+2. Apply the Grafana Application:
+
+    ```sh
+    kubectl apply -f argocd/grafana-application.yaml
+    ```
+
+3. ArgoCD will now deploy Grafana using the specified Helm chart. You can monitor the deployment progress in the ArgoCD UI.
+
+4. The service to access grafana:
+    Update `/etc/hosts` file by add this line
+
+    ```sh
+
+    ...
+
+    127.0.0.1       grafana.example.com
+    ```
+
+    Now you can access the grafana at `http://grafana.example.com:8888`.
+
+5. Login username as `admin` and retrieve the initial password:
+
+    ```sh
+    kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+    ```
+
+Now you have Grafana deployed and managed by ArgoCD using a Helm chart. Any updates to the Helm chart will be automatically applied by ArgoCD, ensuring your Grafana installation stays up-to-date.
