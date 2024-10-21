@@ -116,39 +116,42 @@ To implement GitOps using ArgoCD on your k3d cluster, follow these steps:
     apiVersion: argoproj.io/v1alpha1
     kind: Application
     metadata:
-      name: json-server-app
+      name: json-server-app # application name
       namespace: argocd
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/your-username/your-repo.git'
-        path: k8s
+        repoURL: 'https://github.com/srankmeng/my-gitops.git'
+        path: k8s # directory keep k8s manifest files
         targetRevision: HEAD
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: default
       syncPolicy:
         automated:
-          prune: true
-          selfHeal: true
+          prune: true # auto delete resource when haven't on git repository
+          selfHeal: true # auto sync state compare on git repository
     ```
-
-   Replace `'https://github.com/your-username/your-repo.git'` with your actual Git repository URL.
 
 6. Apply the Application:
 
     ```sh
-    kubectl apply -f application.yaml
+    kubectl apply -f argocd/application.yaml
     ```
 
 7. ArgoCD will now automatically sync your Kubernetes manifests from the specified Git repository to your k3d cluster. Any changes pushed to the repository will be automatically applied to the cluster.
 
-8. To make changes to your application:
-   - Update the Kubernetes manifests in your Git repository
-   - Commit and push the changes
-   - ArgoCD will detect the changes and automatically apply them to your k3d cluster
+8. Recheck application on ArgoCD UI:
+
+    Access the ArgoCD UI at `http://localhost:8080`.
+
+9. The service to access it locally:
+
+    Now you can access the JSON Server at `http://localhost:8888`.
+
+10. To make changes to your application:
+    - Update the Kubernetes manifests in your Git repository
+    - Commit and push the changes
+    - ArgoCD will detect the changes and automatically apply them to your k3d cluster
 
 This setup ensures that your k3d cluster configuration is always in sync with your Git repository, following GitOps best practices.
-
-
-
