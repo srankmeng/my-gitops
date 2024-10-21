@@ -218,3 +218,11 @@ Deploy Grafana using ArgoCD with Helm Chart:
     ```
 
 Now you have Grafana deployed and managed by ArgoCD using a Helm chart. Any updates to the Helm chart will be automatically applied by ArgoCD, ensuring your Grafana installation stays up-to-date.
+
+## Delete k3d Cluster
+
+Before leave tutorial delete k3d cluster
+
+```sh
+k3d cluster delete my-cluster
+```
