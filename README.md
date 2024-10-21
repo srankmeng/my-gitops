@@ -150,7 +150,7 @@ To implement GitOps using ArgoCD on your k3d cluster, follow these steps:
     Now you can access the JSON Server at `http://localhost:8888`.
 
 10. To make changes to your application:
-    - Update the Kubernetes manifests in your Git repository
+    - Update the Kubernetes manifests in your Git repository: for example replica
     - Commit and push the changes
     - ArgoCD will detect the changes and automatically apply them to your k3d cluster
 
